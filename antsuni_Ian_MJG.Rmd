@@ -1,0 +1,110 @@
+---
+title: "Insect richness Ian"
+output: html_notebook
+---
+
+All richness response variables were fitted using generalized linear mixed models with a Poisson error distribution and Laplace approximation of the model likelihood. Abundance, although a count, was transformed [loge (x + 1)] and fitted using a linear mixed model (LMM) with a Gaussian distribution. Abundance data were transformed due to strong patterns observed in the residual spread of a Poisson GLMM, which was observed even when a site level random effect was included to account for overdispersion. Species diversity data were also modelled using a LMM with a Gaussian normal distribution. For all Poisson GLMMs we assessed the degree of overdispersion and apart from the models of the raw abundance counts, none was evident. Exploratory analyses found no support for non-linear relationships (see Supporting Information).
+
+The initial model included the additive effects of all explanatory variables, and the random intercept for Farm (ε):
+
+Response∼β1+β2Aridity+β3Canopy+β4Bareground+β5LUI+β6Exotic+β7pH+β8Clay+eFarm
+where β1 is the intercept and remaining β2 through to β8 are the estimates of the coefficients for each fixed effect.
+
+https://link.springer.com/article/10.1007/s10980-016-0411-9 
+
+```{r}
+options(na.action = "na.fail")
+
+library(tidyverse);library(lme4);library(jtools);library(effects);library(visreg); library(DHARMa); library(sf);library(InterEco)
+dat=InterEco::antsuni
+dat=dat%>%na.omit()
+
+names(dat)
+
+mod=glmer(richness~ scale(lt_clim)*(scale(woody) +scale(perc_clay)+ scale(lui) + scale(bare)+scale(exotic_grnd))  + (1|farm_id), family="poisson", data=dat)
+
+
+
+summ(mod)
+d1=MuMIn::dredge(mod, rank="AICc", beta="sd", fixed=c("scale(lui)", "scale(woody)","scale(perc_clay)"))
+d1
+
+# best model selected
+bestmod=glmer(richness~scale(lt_clim)*scale(woody) +scale(lt_clim)*scale(perc_clay)+  scale(lt_clim)*scale(bare)+ scale(lui) +scale(exotic_grnd)  + (1|farm_id), family="poisson", data=dat)
+summ(bestmod)
+plot(allEffects(bestmod))
+#unscaled
+#bestmod=glmer(Richness~LT_clim*woody +LT_clim*perc.Clay+  LT_clim*bare+ LUI +Exotic_grnd  + (1|Farm_ID), family="poisson", data=na.omit(dat))
+
+#take a look at predictions from best model
+plot(allEffects(bestmod)[3]);plot(allEffects(bestmod)[4]);plot(allEffects(bestmod)[5])
+visreg(bestmod, "exotic_grnd", "lui", scale="response", overlay=T, breaks=c(1,10))
+visreg(bestmod, "lui","exotic_grnd", scale="response")
+visreg(bestmod, "lui", "lt_clim", scale="response", overlay=T, breaks=2)
+
+#make plots and view on multiple scales
+x.mult2=visreg(bestmod, "exotic_grnd", "lui",  overlay=T, breaks=c(1,12), partial=F, cond = list(woody=7))
+x.add2=visreg(bestmod, "exotic_grnd", "lui", scale="response", overlay=T, breaks=c(1,12), cond = list(woody=7))
+
+p.add2=x.add2$fit%>%ggplot()+geom_ribbon(aes(x=exotic_grnd, ymin=visregLwr,ymax=visregUpr, fill=as.factor(lui)),alpha=0.2)+geom_line(aes(x=exotic_grnd, y=visregFit, col=as.factor(lui)), lwd=2)+scale_color_viridis_d("lui")+theme_bw()+ylab("Predicted ant species richness")+xlab("Exotic ground cover (%)")+scale_fill_viridis_d("lui")
+
+p.mult2=x.mult2$fit%>%ggplot()+geom_ribbon(aes(x=exotic_grnd, ymin=visregLwr,ymax=visregUpr, fill=as.factor(lui)),alpha=0.2)+geom_line(aes(x=exotic_grnd, y=visregFit, col=as.factor(lui)), lwd=2)+scale_color_viridis_d("lui")+theme_bw()+ylab("Predicted species richness")+xlab("Exotic ground cover (%)")+scale_y_continuous()+scale_fill_viridis_d("lui")
+
+
+# Plot predictions on all scales
+gridExtra::grid.arrange(p.add2, p.mult2, ncol=2)
+
+gridExtra::grid.arrange(p.add2, p.add2+scale_y_log10(), ncol=2)
+
+```
+
+```{r}
+p.add2.ant=x.add2$fit%>%ggplot()+geom_ribbon(aes(x=exotic_grnd, ymin=visregLwr,ymax=visregUpr, fill=as.factor(lui)),alpha=0.2)+geom_line(aes(x=exotic_grnd, y=visregFit, col=as.factor(lui)), lwd=2)+scale_color_viridis_d("lui", guide=F)+theme_bw()+ylab("Predicted ant species richness")+xlab("Exotic ground cover (%)")+scale_fill_viridis_d("lui", guide=F)
+
+```
+
+Diagnostic plots
+
+Use the Dharma package to explore model residuals
+
+```{r}
+resDHARMa = simulateResiduals(bestmod, n=200, plot=T, integerResponse = T)
+dat$resid <- resDHARMa$scaledResiduals
+dat$predicted <- resDHARMa$fittedPredictedResponse
+dat$observed <- resDHARMa$observedResponse
+
+
+#residuals vs spatial variables
+st <- dat%>%dplyr::select(richness,resid, predicted, observed,  x,y,site_id)%>%
+  pivot_longer(cols=-c("richness","site_id", "resid"), names_to = "VAR")%>%
+  ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("spatial and temporal variables")+geom_smooth(aes(x=value, y=resid))
+
+#residuals vs predictors in model
+im <- dat%>%dplyr::select(resid, site_id, lt_clim, woody, perc_clay, bare, lui, exotic_grnd)%>%
+  pivot_longer(cols=-c("site_id", "resid"), names_to = "VAR")%>%
+  ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("variables in model")+geom_smooth(aes(x=value, y=resid))
+
+#residuals vs predictors not in model
+nm <- dat%>%dplyr::select(resid, site_id, elev, grnd_cvr, litter, logs, c_n )%>%
+  pivot_longer(cols=-c("site_id", "resid"), names_to = "VAR")%>%
+  ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_continuous(guide=F)+ggtitle("omitted variables")
+
+
+gridExtra::grid.arrange(im,st, nrow=2)
+```
+
+Now look at VIFs
+
+```{r}
+#summ(bestmod, vifs=T)
+
+vifs <- data.frame(car::vif(bestmod))
+vifs%>%
+  mutate(VAR=row.names(vifs))%>%
+  mutate(VAR= stringr::str_extract(string=VAR, pattern = "(?<=\\().*(?=\\))"))%>%# get rid of the scale text
+  mutate(VAR= recode_factor(VAR,"lt_clim):scale(woody"="lt_clim:woody", "lt_clim):scale(perc.Clay"="lt_clim:perc.Clay", "lt_clim):scale(bare"="lt_clim:bare"), VIFs=car..vif.bestmod.)%>%
+  ggplot()+geom_point(aes(x=VAR, y=VIFs))+geom_hline(yintercept = 2, linetype="dashed", col="red")+theme_bw()+ylab("VIF")+xlab("Variable")+ theme(axis.text.x = element_text(angle = 90))
+
+```
+
+

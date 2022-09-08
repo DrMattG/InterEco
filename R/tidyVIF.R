@@ -7,6 +7,8 @@
 
 tidyVIF<-function(modelObject){
   car..vif.modelObject.<-NULL
+  VAR<-NULL
+  VIFs<-NULL
   vifs <- data.frame(car::vif(modelObject))
    vifs%>%
     mutate(VAR=row.names(vifs))%>%

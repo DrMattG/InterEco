@@ -15,16 +15,13 @@ library(InterEco)
 shinyServer(function(input, output) {
 
 
-  #start_text <- read_file("C:/Users/matthew.grainger/Documents/Projects_in_development/InterEco/inst/shiny-examples/interEco/www/AboutinterEco.html")
-  #how_cite_text <- read_file("C:/Users/matthew.grainger/Documents/Projects_in_development/InterEco/inst/shiny-examples/interEco/www/HowCiteinterEco.html")
-  #how_works_text <- read_file("C:/Users/matthew.grainger/Documents/Projects_in_development/InterEco/inst/shiny-examples/interEco/www/HowinterEcoworks.html")
 
-   start_text <- read_file("www/AboutinterEco.html")
-   how_cite_text <- read_file("www/HowCiteinterEco.html")
-   how_works_text <- read_file("www/HowinterEcoworks.html")
+   start_text <- readr::read_file("www/AboutinterEco.html")
+   how_cite_text <- readr::read_file("www/HowCiteinterEco.html")
+   how_works_text <- readr::read_file("www/HowinterEcoworks.html")
 
    data_internal <- reactiveValues(
-     raw = NULL
+     raw1 = NULL
    )
 
 
@@ -49,28 +46,27 @@ shinyServer(function(input, output) {
 
   observeEvent(input$sample_or_real, {
     if(input$sample_or_real == "sample"){
-      data_internal$raw <- InterEco::internal_model
-      #data_internal$filtered <- data_internal$raw #instantiate filtered table with raw values
-    } else {
-      data_internal$raw <- NULL
-      #data_internal$filtered <- NULL
+      data_internal$raw1 <- InterEco::internal_model
+       } else {
+      data_internal$raw1 <- NULL
+
     }
   })
 
   data_active <- reactive({
-    req(data_internal$raw)
-      d_out <-data_internal$raw
+    req(data_internal$raw1)
+      d_out <-data_internal$raw1
 
   })
 
   output$model_summary <- renderPrint({
-    if(!is.null(data_internal$raw)){
-      jtools::summ(data_internal$raw)
+    if(!is.null(data_internal$raw1)){
+      jtools::summ(data_internal$raw1)
     }
   })
 
   output$VIFplot<-renderPlot(
-    tidyVIF(data_internal$raw)
+    tidyVIF(data_internal$raw1)
   )
 
 })

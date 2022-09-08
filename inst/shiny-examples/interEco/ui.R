@@ -11,6 +11,7 @@ library(shiny)
 library(shinydashboard)
 library(shinyBS)
 library(shinyWidgets)
+library(InterEco)
 easyprint_js_file <- "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js"
 
 sidebar <- dashboardSidebar(
@@ -71,7 +72,7 @@ body <- dashboardBody(
                     tabPanel(title = 'How to Cite interEco', htmlOutput("how_cite_text"))
                   )),
                   wellPanel(tabsetPanel(
-                    tabPanel(title = 'Model Attributes', htmlOutput("model_summary"))
+                    tabPanel(title = 'Model Attributes', textOutput("model_summary"))
                   ))
                 ),
                 #Sidebar panel for inputs

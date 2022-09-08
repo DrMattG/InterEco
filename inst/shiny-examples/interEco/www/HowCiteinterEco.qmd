@@ -1,0 +1,11 @@
+---
+title: "How to cite interEco"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+library(InterEco)
+citation("InterEco")
+```

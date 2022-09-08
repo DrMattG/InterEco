@@ -1,9 +1,12 @@
 #' tidyVIF
 #' @param modelObject A model object
+#' @import dplyr ggplot2
+#' @importFrom car vif
 #' @return plot of VIF
 #' @export
 
 tidyVIF<-function(modelObject){
+  car..vif.modelObject.<-NULL
   vifs <- data.frame(car::vif(modelObject))
    vifs%>%
     mutate(VAR=row.names(vifs))%>%

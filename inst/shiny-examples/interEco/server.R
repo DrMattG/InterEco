@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(InterEco)
 
 
 # Define server logic required to draw a histogram

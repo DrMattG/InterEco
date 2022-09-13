@@ -1,0 +1,13 @@
+name: interEco
+title: interEco
+username:
+account: estech
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6953101
+bundleId: 6281538
+url: https://estech.shinyapps.io/interEco/
+when: 1662643518.45748
+lastSyncTime: 1662643518.45748
+asMultiple: FALSE
+asStatic: FALSE

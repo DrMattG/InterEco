@@ -11,7 +11,7 @@ A glmer model object
 internal_model
 }
 \description{
-Bestmodel for the antsuni data.  Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) \link{'glmerMod'}
+Bestmodel for the antsuni data.  Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) 'glmerMod'
 }
 \details{
 DETAILS

@@ -2,6 +2,7 @@
 #' @param modelObject A model object
 #' @import dplyr ggplot2
 #' @importFrom car vif
+#' @importFrom stringr str_extract
 #' @return plot of VIF
 #' @export
 

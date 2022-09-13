@@ -7,6 +7,8 @@
 #    http://shiny.rstudio.com/
 #
 
+options(repos = c("CRAN" = "https://cran.rstudio.com/", "InterEco"="https://github.com/DrMattG/InterEco"))
+
 library(shiny)
 library(shinydashboard)
 library(shinyBS)
@@ -72,7 +74,7 @@ body <- dashboardBody(
                     tabPanel(title = 'How to Cite interEco', htmlOutput("how_cite_text"))
                   )),
                   wellPanel(tabsetPanel(
-                    tabPanel(title = 'Model Attributes', textOutput("model_summary"))
+                    tabPanel(title = 'Model Attributes', tableOutput("model_summary"))
                   ))
                 ),
                 #Sidebar panel for inputs

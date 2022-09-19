@@ -6,6 +6,9 @@
 #
 #    http://shiny.rstudio.com/
 #
+#options(repos = c("CRAN" = "https://cran.rstudio.com/", "InterEco"="https://github.com/DrMattG/InterEco"))
+# TODO find out why App will not deploy to ShinyApps.io - something to do with the build of InterEco
+
 
 library(shiny)
 library(InterEco)
@@ -46,7 +49,7 @@ shinyServer(function(input, output) {
 
   observeEvent(input$sample_or_real, {
     if(input$sample_or_real == "sample"){
-      data_internal$raw1 <- InterEco::internal_model
+      data_internal$raw1 <- internal_model
        } else {
       data_internal$raw1 <- NULL
 
@@ -59,11 +62,13 @@ shinyServer(function(input, output) {
 
   })
 
-  output$model_summary <- renderPrint({
+  output$model_summary <- renderTable({
     if(!is.null(data_internal$raw1)){
-      jtools::summ(data_internal$raw1)
-    }
-  })
+      coefdat <- jtools::summ(data_active())
+      coefdat <- round(data.frame(coefdat$coeftable),3)
+      coefdat
+      }
+  }, rownames = TRUE)
 
   output$VIFplot<-renderPlot(
     tidyVIF(data_internal$raw1)

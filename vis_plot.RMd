@@ -84,9 +84,55 @@ param.plot2 <- ggplot(dat)+
 
 gird.arrange(condplot, param.plot1, param.plot2)
    
-   
+ })
 
 
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+library(interactions)
+# render a plot that displays a classic visreg plot - y
+ output$marg.plots <- renderPlot({
+   x <- visreg(fit=mod, xvar=input$VAR1, by=input$VAR2, cond=list(LUI=input$LUI_sel, Exotic_grnd=input$Exotic_grnd_sel, Bare=input$Bare_sel),partial=F, print.cond=TRUE,nn=500, scale="response")# scale = response only if input$scale is richness??
+
+   condplot <-   ggplot(x$fit,aes(VAR1,visregFit))+
+     geom_line()+
+     facet_grid(.~VAR2,scales="free")+geom_ribbon(data=x$fit,aes(ymin=visregLwr,ymax=visregUpr),alpha=0.2)+ theme_bw() + theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+     xlab("VAR2")+ylab("XXXXX")
+
+
+param.plot1 <- ggplot(dat)+
+  geom_point(aes(y=LUI, x=input$VAR1))+geom_hline(yintercept=input$LUI_sel, linetype="dashed", col="red")+
+  xlab("VAR2")+ylab("LUI")
+
+
+
+param.plot2 <- ggplot(dat)+
+  geom_point(aes(y=Bare, x=input$VAR1))+geom_hline(yintercept=input$Bare_sel, linetype="dashed", col="red")+
+  xlab("VAR2")+ylab("BARE")
+
+
+gird.arrange(condplot, param.plot1, param.plot2)
+   
+ })
+
+```
+```{r}
+dat=InterEco::antsuni
+dat=dat%>%na.omit()
+
+names(dat)
+
+mod=glmer(richness~ scale(lt_clim)*(scale(woody) +scale(perc_clay)+ scale(lui) + scale(bare)+scale(exotic_grnd))  + (1|farm_id), family="poisson", data=dat)
+mod=glmer(richness~ lt_clim*(woody +scale(perc_clay)+ scale(lui) + scale(bare)+scale(exotic_grnd))  + (1|farm_id), family="poisson", data=dat)
+
+
+jn.ob <- johnson_neyman(model = mod, pred = lt_clim,
+  modx = woody, plot=T)
+jn.ob$plot+scale_color_viridis_d()+scale_fill_viridis_d()
+
+
+```
+

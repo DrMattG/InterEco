@@ -51,6 +51,7 @@ selectInput("SCALE_RESPONSE",
                         label = "Percentage clay, %",
                         min = min(dat$perc.Clay), max = max(dat$perc.Clay), value = median(dat$perc.Clay), step = 10),
             
+  
             sliderInput("Bare_sel", 
                         label = "Percentage bare ground, %",
                         min = min(dat$Bare), max = max(dat$Bare), value = median(dat$Bare), step = 10),

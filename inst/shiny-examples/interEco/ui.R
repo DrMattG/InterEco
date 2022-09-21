@@ -7,6 +7,8 @@
 #    http://shiny.rstudio.com/
 #
 
+options(repos = c("CRAN" = "https://cran.rstudio.com/", "InterEco"="https://github.com/DrMattG/InterEco"))
+
 library(shiny)
 library(shinydashboard)
 library(shinyBS)
@@ -89,6 +91,7 @@ body <- dashboardBody(
                     background-color: #2d6c66;
                     }
                     ")),
+
     mainPanel(
       tabsetPanel(
         tabPanel("tab1", plotOutput("plot1")),

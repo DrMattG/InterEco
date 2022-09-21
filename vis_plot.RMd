@@ -1,0 +1,92 @@
+---
+title: "VisFigs"
+author: "Becks-Spake"
+date: "21/09/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Create visreg figure
+
+```{r cars}
+mod=bestmod
+
+
+```
+
+## Including Plots
+
+
+```{r pressure, echo=FALSE}
+
+dat$LUI
+min(dat$LUI)
+
+ selectInput("VAR1", 
+                      label = "Variable 1",
+                      choices = list("Woody", 
+                                       "LT_clim")
+             
+              selectInput("VAR2", 
+                      label = "Variable 2",
+                      choices = list("Woody", 
+                                       "LT_clim")
+                      
+                      
+selectInput("SCALE_RESPONSE",
+             label = "Scale of response variable",
+                      choices = list("Log(species richness)", 
+                                       "Species richness")
+
+
+
+  sliderInput("LUI", 
+                        label = "LUI_sel",
+                        min = min(dat$LUI), max = max(dat$LUI), value = median(dat$LUI), step = 1),
+            
+            sliderInput("perc.Clay_sel", 
+                        label = "Percentage clay, %",
+                        min = min(dat$perc.Clay), max = max(dat$perc.Clay), value = median(dat$perc.Clay), step = 10),
+            
+  
+            sliderInput("Bare_sel", 
+                        label = "Percentage bare ground, %",
+                        min = min(dat$Bare), max = max(dat$Bare), value = median(dat$Bare), step = 10),
+            
+            sliderInput("Exotic_grnd_sel", 
+                        label = "Percentage cover of exotic species",
+                        min =  min(dat$Exotic_grnd), max = max(dat$Exotic_grnd), value = median(dat$Exotic_grnd), step = 10),
+
+# render a plot that displays a classic visreg plot - y
+ output$cond.plots <- renderPlot({
+   x <- visreg(fit=mod, xvar=input$VAR1, by=input$VAR2, cond=list(LUI=input$LUI_sel, Exotic_grnd=input$Exotic_grnd_sel, Bare=input$Bare_sel),partial=F, print.cond=TRUE,nn=500, scale="response")# scale = response only if input$scale is richness??
+
+   condplot <-   ggplot(x$fit,aes(VAR1,visregFit))+
+     geom_line()+
+     facet_grid(.~VAR2,scales="free")+geom_ribbon(data=x$fit,aes(ymin=visregLwr,ymax=visregUpr),alpha=0.2)+ theme_bw() + theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+     xlab("VAR2")+ylab("XXXXX")
+
+
+param.plot1 <- ggplot(dat)+
+  geom_point(aes(y=LUI, x=input$VAR1))+geom_hline(yintercept=input$LUI_sel, linetype="dashed", col="red")+
+  xlab("VAR2")+ylab("LUI")
+
+
+
+param.plot2 <- ggplot(dat)+
+  geom_point(aes(y=Bare, x=input$VAR1))+geom_hline(yintercept=input$Bare_sel, linetype="dashed", col="red")+
+  xlab("VAR2")+ylab("BARE")
+
+
+gird.arrange(condplot, param.plot1, param.plot2)
+   
+   
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -69,4 +69,9 @@ shinyServer(function(input, output) {
     tidyVIF(data_internal$raw1)
   )
 
+  output$Diagnostics<-renderPlot(
+    performance::check_model(data_internal$raw1)
+    #checkModel(data_internal$raw1)
+  )
+
 })

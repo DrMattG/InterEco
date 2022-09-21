@@ -23,9 +23,37 @@ sidebar <- dashboardSidebar(
                        icon = icon("map")),
               menuItem("View Code",
                        href = "https://github.com/DrMattG/InterEco",
-                       icon = icon("github"))
+                       icon = icon("github")),
+              menuItem("Upload model",
+                       radioButtons(
+                         "sample_or_real",
+                         label = h4("Which Model to Use?"),
+                         choices = list(
+                           "Sample Model" = "sample",
+                           "Upload model object" = "user"),
+                         selected = "sample"
+                       ),
+                       bsTooltip("sample_or_real",
+                                 title = "Select whether you want to try interEco using the sample model, or whether you wish to upload your own model object in the correct format",
+                                 placement = "left",
+                                 trigger = "hover"
+                       ),
+                       conditionalPanel(
+                         condition = "input.sample_or_real == 'user'",
+
+                         # Input: Select a file ----
+                         menuItem(
+                           fileInput(
+                             "model_upload",
+                             label = "Choose model object",
+                             multiple = FALSE,
+                             accept = c(
+                               ".RDS"),
+                             placeholder = ".RDS file")
+                         ))
+              )
+                       )
   )
-)
 
 home <- tags$html(
   tags$head(
@@ -61,64 +89,15 @@ body <- dashboardBody(
                     background-color: #2d6c66;
                     }
                     ")),
-
-      tabItems(
-      tabItem(tabName = "about",
-              fluidRow(
-                mainPanel(wellPanel(
-                  tabsetPanel(
-                    tabPanel(title = 'About interEco', htmlOutput("start_text")),
-                    tabPanel(title = 'How to Use interEco', htmlOutput("how_works_text")),
-                    tabPanel(title = 'How to Cite interEco', htmlOutput("how_cite_text"))
-                  )),
-                  wellPanel(tabsetPanel(
-                    tabPanel(title = 'Model Attributes', textOutput("model_summary"))
-                  ))
-                ),
-                #Sidebar panel for inputs
-                sidebarPanel(
-                  tabsetPanel(
-                    tabPanel(
-                      title = "Upload model",
-                      radioButtons(
-                        "sample_or_real",
-                        label = h4("Which Model to Use?"),
-                        choices = list(
-                          "Sample Model" = "sample",
-                          "Upload model object" = "user"),
-                        selected = "sample"
-                      ),
-                      bsTooltip("sample_or_real",
-                                title = "Select whether you want to try interEco using the sample model, or whether you wish to upload your own model object in the correct format",
-                                placement = "left",
-                                trigger = "hover"
-                      ),
-                      conditionalPanel(
-                        condition = "input.sample_or_real == 'user'",
-
-                        # Input: Select a file ----
-                        fluidRow(
-                          fileInput(
-                            "model_upload",
-                            label = "Choose model object",
-                            multiple = FALSE,
-                            accept = c(
-                              ".RDS"),
-                            placeholder = ".RDS file")
-                          ))
-                      ))
-                ))
-      ),
-
-      tabItem(tabName = "home",
-              fluidRow(
-                tabsetPanel(
-                  tabPanel("VIF",
-                           wellPanel(
-                             fluidRow(plotOutput("VIFplot"))))))
-)
-))
-
+    mainPanel(
+      tabsetPanel(
+        tabPanel("tab1", plotOutput("plot1")),
+        tabPanel("tab2", plotOutput("plot2")),
+        tabPanel("tab3", plotOutput("plot3")),
+        tabPanel("tab4", plotOutput("plot4"))
+      )
+    )
+    )
 
 shinyUI(
   dashboardPage(

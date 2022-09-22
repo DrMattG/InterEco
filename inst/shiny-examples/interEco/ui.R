@@ -51,8 +51,8 @@ sidebar <- dashboardSidebar(
                              multiple = FALSE,
                              accept = c(
                                ".RDS"),
-                             placeholder = ".RDS file")
-                         ))
+                             placeholder = ".RDS file"))
+                         )
               )
                        )
   )
@@ -94,9 +94,10 @@ body <- dashboardBody(
 
     mainPanel(
       tabsetPanel(
-        tabPanel("tab1", plotOutput("plot1")),
+        tabPanel("Conditional plots",
+                 uiOutput("inCond")),
         tabPanel("tab2", plotOutput("plot2")),
-        tabPanel("tab3", plotOutput("plot3")),
+        tabPanel("Prediction", uiOutput("inPred")),
         tabPanel("tab4", plotOutput("plot4"))
       )
     )

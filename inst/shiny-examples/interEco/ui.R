@@ -91,17 +91,83 @@ body <- dashboardBody(
                     background-color: #2d6c66;
                     }
                     ")),
+     mainPanel(
+       tabsetPanel(
+         tabItem(tabName = "about",
+                 fluidRow(
+                   mainPanel(wellPanel(
+                     tabsetPanel(
+                       #tabPanel(title = 'About interEco', htmlOutput("start_text")),
+                       #tabPanel(title = 'How to Use interEco', htmlOutput("how_works_text")),
+                       #tabPanel(title = 'How to Cite interEco', htmlOutput("how_cite_text"))
+                     )),
+                     wellPanel(tabsetPanel(
+                       tabPanel(title = 'Model Attributes', textOutput("model_summary"))
+                     ))
+                   ),
+                   #Sidebar panel for inputs
+                   sidebarPanel(
+                     tabsetPanel(
+                       tabPanel(
+                         title = "Upload model",
+                         radioButtons(
+                           "sample_or_real",
+                           label = h4("Which Model to Use?"),
+                           choices = list(
+                             "Sample Model" = "sample",
+                             "Upload model object" = "user"),
+                           selected = "sample"
+                         ),
+                         bsTooltip("sample_or_real",
+                                   title = "Select whether you want to try interEco using the sample model, or whether you wish to upload your own model object in the correct format",
+                                   placement = "left",
+                                   trigger = "hover"
+                         ),
+                         conditionalPanel(
+                           condition = "input.sample_or_real == 'user'",
 
-    mainPanel(
-      tabsetPanel(
-        tabPanel("Conditional plots",
-                 uiOutput("inCond")),
-        tabPanel("tab2", plotOutput("plot2")),
-        tabPanel("Prediction", uiOutput("inPred")),
-        tabPanel("tab4", plotOutput("plot4"))
-      )
-    )
-    )
+                           # Input: Select a file ----
+                           fluidRow(
+                             fileInput(
+                               "model_upload",
+                               label = "Choose model object",
+                               multiple = FALSE,
+                               accept = c(
+                                 ".RDS"),
+                               placeholder = ".RDS file")
+                           ))
+                       ))
+                   ))
+         ),
+
+         tabPanel("Landing page"),
+         tabPanel("Study summary"),
+         tabPanel("Interpretation tab",
+                  tabsetPanel(
+                    tabPanel("multiplicative scale"),
+                    tabPanel("additive scale")
+                  )),
+         tabPanel("Generality"),
+         tabPanel("Validity",
+                  #Text intro
+                  tabsetPanel(
+                    tabPanel("Data exploration"),
+                    tabPanel("Residual diagnostics",
+                             textOutput("RDtext"),
+                             plotOutput("RDPlot")
+                             #Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html]
+                             #Add citations to used packages Zuur & Ieno (2016) https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577),
+                    ),
+                    tabPanel("Variance Inflasion Factors",
+                             textOutput("VIFtext"),
+                             plotOutput("VIFPlot"))
+                    #To evaluate whether coefficient variances were inflated by any multicollinearity,  we computed generalised variance inflation factors GIF(1/(2×df)) , following Fox & Monette (1992) [https://www.jstor.org/stable/2290467#metadata_info_tab_contents]. All values are <2, suggesting collinearity is not an issue.)
+                    #Plot
+                    #VIFs were computed using the car package [https://cran.r-project.org/web/packages/car/index.html] and visualised using ggplot2 [d].
+
+                    )
+     )
+    )))
 
 shinyUI(
   dashboardPage(

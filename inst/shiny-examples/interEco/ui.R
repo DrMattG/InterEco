@@ -15,7 +15,6 @@ library(shinyBS)
 library(shinyWidgets)
 library(InterEco)
 easyprint_js_file <- "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js"
-
 sidebar <- dashboardSidebar(
 
    sidebarMenu(id = "main_sidebar",
@@ -151,17 +150,22 @@ body <- dashboardBody(
          tabPanel("Validity",
                   #Text intro
                   tabsetPanel(
-                    tabPanel("Data exploration"),
+                    tabPanel("Data exploration",
+                             textOutput("DEtext"),
+                             plotOutput("DEPlot")
+                             #Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html]
+                             #Add citations to used packages Zuur & Ieno (2016) https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577),
+                    ),
                     tabPanel("Residual diagnostics",
                              textOutput("RDtext"),
                              plotOutput("RDPlot")
-                             #Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html]
+                             #Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html]
                              #Add citations to used packages Zuur & Ieno (2016) https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577),
                     ),
-                    tabPanel("Variance Inflasion Factors",
+                    tabPanel("Variance Inflation Factors",
                              textOutput("VIFtext"),
                              plotOutput("VIFPlot"))
-                    #To evaluate whether coefficient variances were inflated by any multicollinearity,  we computed generalised variance inflation factors GIF(1/(2×df)) , following Fox & Monette (1992) [https://www.jstor.org/stable/2290467#metadata_info_tab_contents]. All values are <2, suggesting collinearity is not an issue.)
+                    #To evaluate whether coefficient variances were inflated by any multicollinearity, we computed generalised variance inflation factors GIF(1/(2×df)) , following Fox & Monette (1992) [https://www.jstor.org/stable/2290467#metadata_info_tab_contents]. All values are <2, suggesting collinearity is not an issue.)
                     #Plot
                     #VIFs were computed using the car package [https://cran.r-project.org/web/packages/car/index.html] and visualised using ggplot2 [d].
 

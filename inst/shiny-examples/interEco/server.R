@@ -13,9 +13,24 @@
 library(shiny)
 library(InterEco)
 library(tidyverse)
+library(DHARMa)
+library(readr)
 
-#bestmod
-dat<-InterEco::ants
+# Function to return points and geom_smooth
+# allow for the method to be changed
+custom_function = function(data, mapping, method = "loess", ...){
+  p = ggplot(data = data, mapping = mapping) + 
+    geom_point() + 
+    geom_smooth(method=method, ...)
+  
+  p
+}
+
+bestmod <- read_rds("C:/Users/ij926050/Dropbox/INTERECO/InterEco/data/antmod.scaled.rds")
+bestmod.u <- read_rds("C:/Users/ij926050/Dropbox/INTERECO/InterEco/data/antmod.unscaled.rds")
+
+dat<-read.csv("C:/Users/ij926050/Dropbox/INTERECO/InterEco/data/ants.csv")
+names(dat) <- tolower(names(dat))
 dat<-dat%>%na.omit()
 
 # Define server logic required to draw a histogram
@@ -42,12 +57,12 @@ shinyServer(function(input, output) {
 
   output$RDtext<-renderPrint({
     cat("Here, we provide plots of residuals (standardised) to demonstrate that model assumptions are verified.
-        Following Zuur & Ieno (2016) [https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577]
-        and Zuur et al. (2009), we have plotted[https://doi.org/10.1017/CBO9781107415324.004]
-        residuals versus fitted values (fig A), versus each covariate in the model (panel B)
-        and versus covariates not in the model (panel C).
+        Following Zuur and Ieno (2016) [https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577]
+        and Zuur et al. (2009), [https://doi.org/10.1017/CBO9781107415324.004]
+        we have plotted residuals versus each covariate in the model (panel A)
+        and versus covariates not in the model (panel B).
         We have also assessed the residuals for temporal and spatial dependency, by plotting residuals versus
-        the x and y spatial coordinates (panel D).")
+        the x and y spatial coordinates (bottom right of panel B).")
   })
 
   output$VIFtext<-renderPrint({
@@ -55,6 +70,10 @@ shinyServer(function(input, output) {
     we computed generalised variance inflation factors GIF(1/(2×df)),
     following Fox & Monette (1992) [https://www.jstor.org/stable/2290467#metadata_info_tab_contents].
     All values are <2, suggesting collinearity is not an issue.")
+  })
+  
+  output$DEtext<-renderPrint({
+    cat("HERE ARE SCATTERPLOTS")
   })
 
   output$RDPlot<-renderPlot({
@@ -64,17 +83,25 @@ shinyServer(function(input, output) {
      dat$predicted <- resDHARMa$fittedPredictedResponse
      dat$observed <- resDHARMa$observedResponse
     #residuals vs spatial variables
-    st <- dat%>%dplyr::select(richness,resid, predicted, observed,  x,y,site_id)%>%
+     
+    sp <- dat%>%dplyr::select(richness,resid, x,y,site_id)%>%mutate(x=scale(x), y=scale(y))%>%
        pivot_longer(cols=-c("richness","site_id", "resid"), names_to = "VAR")%>%
-       ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("spatial and temporal variables")+geom_smooth(aes(x=value, y=resid)) #residuals vs predictors in model
-    im <- dat%>%dplyr::select(resid, site_id, lt_clim, woody, perc_clay, bare, lui, exotic_grnd)%>%
+       ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+
+      ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("A) Spatial coordinates")+
+      geom_smooth(aes(x=value, y=resid), se=F, span=1, col="lightblue")#residuals vs predictors in model
+    
+    vars.in.mod <- dat%>%dplyr::select(resid, site_id, lt_clim, woody, perc.clay, bare, lui, exotic_grnd)%>%mutate(lt_clim=scale(lt_clim), woody=scale(woody), perc.clay =scale(perc.clay), bare =scale(bare), lui=scale(lui), exotic_grnd=scale(exotic_grnd))%>%
      pivot_longer(cols=-c("site_id", "resid"), names_to = "VAR")%>%
-     ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("variables in model")+geom_smooth(aes(x=value, y=resid)) #residuals vs predictors not in model
-     nm <- dat%>%dplyr::select(resid, site_id, elev, grnd_cvr, litter, logs, c_n )%>%
-     pivot_longer(cols=-c("site_id", "resid"), names_to = "VAR")%>%
-     ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_continuous(guide=F)+ggtitle("omitted variables")
+     ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("A) Variables in the model")+geom_smooth(aes(x=value, y=resid), se=F, col="lightblue")#residuals vs predictors not in model
+     
+    
+  
+     vars.NOT.in.mod <- dat%>%dplyr::select(site_id, resid, elev, litter, max_temp,bulk_density,x,y)%>%mutate(elev=scale(elev), litter=scale(sqrt(litter)), x=scale(x), y=scale(y), bulk_density=scale(bulk_density))%>%
+       pivot_longer(cols=-c("site_id", "resid"), names_to = "VAR")%>%
+       ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("B) Variables not specified in the model")+
+       geom_smooth(aes(x=value, y=resid), se=F, col="lightblue")#residuals vs predictors not in model
 
-    gridExtra::grid.arrange(im,st, nrow=2)
+    gridExtra::grid.arrange(vars.in.mod, vars.NOT.in.mod, nrow=1)
 
   })
 
@@ -88,7 +115,11 @@ shinyServer(function(input, output) {
 
   })
 
-
+  output$DEPlot<-renderPlot({
+    dat%>%dplyr::select(lt_clim, woody, perc.clay, bare, exotic_grnd) %>% GGally::ggpairs(aes(alpha=0.5),progress=F,lower = list(continuous = custom_function))+theme_bw()
+    
+    
+  })
 #   cond_level<-data.frame("Factors"=unlist(strsplit(unique(mod$data[names(mod$xlevels)])[,],split = " ")))
 #
 #   output$inEffect <- renderUI({

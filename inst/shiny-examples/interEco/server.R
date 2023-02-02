@@ -106,6 +106,24 @@ shinyServer(function(input, output) {
 
   })
 
+output$pairs_plot<-renderUI({
+  selectInput("whichpairs",
+              "Which variables do you wish to plot?",
+              choices=names(dat),
+              multiple = TRUE)
+
+})
+
+output$pairs<-renderPlot({
+  req(input$whichpairs)
+  dat |>
+    dplyr::select(input$whichpairs) |>
+    GGally::ggpairs(aes(alpha=0.5),progress=F,
+                    lower = list(continuous = custom_function))+
+    theme_bw()
+
+})
+
 
 
 #   cond_level<-data.frame("Factors"=unlist(strsplit(unique(mod$data[names(mod$xlevels)])[,],split = " ")))

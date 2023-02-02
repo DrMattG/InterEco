@@ -94,7 +94,13 @@ body <- dashboardBody(
                              DT::dataTableOutput("descript1")),
                              tabPanel(
                                "Numeric variables",
-                               DT::dataTableOutput("descript2")))),
+                               DT::dataTableOutput("descript2")),
+                             tabPanel(
+                               "Pairs plot",
+                               uiOutput("pairs_plot"),
+                               plotOutput("pairs")
+                             )
+                             )),
                     tabPanel("Residual diagnostics",
                              textOutput("RDtext"),
                              plotOutput("RDPlot"),

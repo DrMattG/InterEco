@@ -14,8 +14,11 @@ library(shiny)
 library(InterEco)
 library(tidyverse)
 
-#bestmod
+# Add the data and the model to be assessed
 dat<-InterEco::ants
+bestmod<-InterEco::bestmod
+
+# remove any NAs from the data
 dat<-dat%>%na.omit()
 
 # Define server logic required to draw a histogram
@@ -50,6 +53,11 @@ shinyServer(function(input, output) {
         the x and y spatial coordinates (panel D).")
   })
 
+  output$DHARMa<-renderPrint({
+    cat("Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html], see also
+     Zuur & Ieno (2016) https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577")
+    })
+
   output$VIFtext<-renderPrint({
     cat("To evaluate whether coefficient variances were inflated by any multicollinearity,
     we computed generalised variance inflation factors GIF(1/(2×df)),
@@ -58,7 +66,7 @@ shinyServer(function(input, output) {
   })
 
   output$RDPlot<-renderPlot({
-    resDHARMa = simulateResiduals(bestmod, n=200, plot=T, integerResponse = T)
+    resDHARMa = DHARMa::simulateResiduals(bestmod, n=200, plot=T, integerResponse = T)
 
      dat$resid <- resDHARMa$scaledResiduals
      dat$predicted <- resDHARMa$fittedPredictedResponse
@@ -79,14 +87,25 @@ shinyServer(function(input, output) {
   })
 
   output$VIFPlot<-renderPlot({
-    vifs <- data.frame(car::vif(bestmod))
-    vifs%>%
-      mutate(VAR=row.names(vifs))%>%#next consider cleaning the variable names, as they include the 'scaled' text.
-      mutate(VAR= stringr::str_extract(string=VAR, pattern = "(?<=\\().*(?=\\))"))%>%# get rid of the scale text
-      mutate(VAR= recode_factor(VAR,"lt_clim):scale(woody"="lt_clim:woody", "lt_clim):scale(perc.Clay"="lt_clim:perc.Clay", "lt_clim):scale(bare"="lt_clim:bare"), VIFs=car..vif.bestmod.)%>%
-      ggplot()+geom_point(aes(x=VAR, y=VIFs))+geom_hline(yintercept = 2, linetype="dashed", col="red")+theme_bw()+ylab("VIF")+xlab("Variable")+ theme(axis.text.x = element_text(angle = 90))
+    InterEco::tidyVIF(bestmod)
+  })
+
+  output$descript1<-DT::renderDT({
+    text=skimr::partition(skimr::skim(ants))
+
+    text$character |> DT::datatable()
+
 
   })
+
+  output$descript2<-DT::renderDT({
+    text=skimr::partition(skimr::skim(ants))
+
+    text$numeric |> DT::datatable()
+
+
+  })
+
 
 
 #   cond_level<-data.frame("Factors"=unlist(strsplit(unique(mod$data[names(mod$xlevels)])[,],split = " ")))

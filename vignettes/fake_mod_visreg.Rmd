@@ -25,7 +25,7 @@ dat$taxon="A"
 
 dat <-  rbind(dat, dat1)
 
-mod <- glm(abun~forest*elev*taxon, data=dat, family=poisson)
+mod <- glm(abun~forest*elev*taxon, data=InterEco::fake_data, family=poisson)
 
 plot(effects::allEffects(mod))
 
@@ -39,4 +39,4 @@ x.add <- visreg(mod, "forest", "elev", scale="response", cond=list(taxon="B"))
 x.add$fit%>%ggplot(aes(x=forest))+geom_ribbon(aes(ymin=visregLwr,ymax=visregUpr, fill=as.factor(round(elev))),alpha=0.2)+geom_line(aes(y=visregFit, col=as.factor(round(elev))), lwd=2)+scale_color_viridis_d("ELEV")+theme_bw()+ylab("Predicted abundance")+xlab("forest (%)")+scale_fill_viridis_d("ELEV")
 
 x.mult$fit%>%ggplot(aes(x=forest))+geom_ribbon(aes(ymin=visregLwr,ymax=visregUpr, fill=as.factor(round(elev))),alpha=0.2)+geom_line(aes(y=visregFit, col=as.factor(round(elev))), lwd=2)+scale_color_viridis_d("ELEV")+theme_bw()+ylab("Predicted abundance")+xlab("forest (%)")+scale_fill_viridis_d("ELEV")
-
+```

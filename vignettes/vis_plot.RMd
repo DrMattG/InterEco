@@ -92,6 +92,7 @@ gird.arrange(condplot, param.plot1, param.plot2)
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 ```{r}
 library(interactions)
+
 # render a plot that displays a classic visreg plot - y
  output$marg.plots <- renderPlot({
    x <- visreg(fit=mod, xvar=input$VAR1, by=input$VAR2, cond=list(LUI=input$LUI_sel, Exotic_grnd=input$Exotic_grnd_sel, Bare=input$Bare_sel),partial=F, print.cond=TRUE,nn=500, scale="response")# scale = response only if input$scale is richness??
@@ -119,6 +120,8 @@ gird.arrange(condplot, param.plot1, param.plot2)
  })
 
 ```
+
+
 ```{r}
 dat=InterEco::antsuni
 dat=dat%>%na.omit()

@@ -1,7 +1,5 @@
 
-## Study summary
-
-### Abstract
+## Abstract
 
 We address the issue of adapting landscapes for improved insect
 biodiversity conservation in a changing climate by assessing the

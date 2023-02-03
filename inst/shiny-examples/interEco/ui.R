@@ -76,9 +76,10 @@ body <- dashboardBody(
          #           ))
          # ),
 
-         tabPanel("Landing page"),
-         tabPanel("Study summary",
+         tabPanel("Landing page",
                   htmltools::includeMarkdown("www/About_this_study.md")),
+         tabPanel("Study summary"
+                 ),
          tabPanel("Interpretation tab",
                   tabsetPanel(
                     tabPanel("multiplicative scale"),

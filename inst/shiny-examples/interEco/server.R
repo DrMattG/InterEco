@@ -100,7 +100,7 @@ output$pairs<-renderPlot({
   dat |>
     dplyr::select(input$whichpairs) |>
     GGally::ggpairs(aes(alpha=0.5),progress=F,
-                    lower = list(continuous = custom_function))+
+                    lower = list(continuous = InterEco::custom_function))+
     theme_bw()
 
 })

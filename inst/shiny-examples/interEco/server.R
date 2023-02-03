@@ -24,26 +24,7 @@ dat<-dat%>%na.omit()
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
-  start_text <- readr::read_file("www/AboutinterEco.html")
-  how_cite_text <- readr::read_file("www/HowCiteinterEco.html")
-  how_works_text <- readr::read_file("www/HowinterEcoworks.html")
-
-
-
-  output$start_text <- renderPrint({
-    cat(start_text)
-  })
-  output$about_sysmap_text <- renderPrint({
-    cat(about_sysmap_text)
-  })
-  output$how_works_text <- renderPrint({
-    cat(how_works_text)
-  })
-  output$how_cite_text <- renderPrint({
-    cat(how_cite_text)
-  })
-
-  output$RDtext<-renderPrint({
+output$RDtext<-renderPrint({
     cat("Here, we provide plots of residuals (standardised) to demonstrate that model assumptions are verified.
         Following Zuur & Ieno (2016) [https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577]
         and Zuur et al. (2009), we have plotted[https://doi.org/10.1017/CBO9781107415324.004]

@@ -1,9 +1,0 @@
----
-title: "How interEco works"
-format: html
-editor: visual
----
-
-## 
-
-Nice example/vignette-type here

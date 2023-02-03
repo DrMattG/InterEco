@@ -1,9 +1,0 @@
----
-title: "Welcome to interEcol"
-format: html
-editor: visual
----
-
-## About
-
-Something fun and witty!

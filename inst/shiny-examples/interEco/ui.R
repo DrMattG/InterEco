@@ -65,19 +65,20 @@ body <- dashboardBody(
                     ")),
      mainPanel(
        tabsetPanel(
-         tabItem(tabName = "about",
-                 fluidRow(
-                   mainPanel(wellPanel(
-                     tabsetPanel(
-                       tabPanel(title = 'About interEco', htmlOutput("start_text")),
-                       tabPanel(title = 'How to Use interEco', htmlOutput("how_works_text")),
-                       tabPanel(title = 'How to Cite interEco', htmlOutput("how_cite_text"))
-                     ))
-                   ))
-         ),
+         # tabItem(tabName = "about",
+         #         fluidRow(
+         #           mainPanel(wellPanel(
+         #             tabsetPanel(
+         #               tabPanel(title = 'About interEco', htmlOutput("start_text")),
+         #               tabPanel(title = 'How to Use interEco', htmlOutput("how_works_text")),
+         #               tabPanel(title = 'How to Cite interEco', htmlOutput("how_cite_text"))
+         #             ))
+         #           ))
+         # ),
 
          tabPanel("Landing page"),
-         tabPanel("Study summary"),
+         tabPanel("Study summary",
+                  htmltools::includeMarkdown("www/About_this_study.md")),
          tabPanel("Interpretation tab",
                   tabsetPanel(
                     tabPanel("multiplicative scale"),

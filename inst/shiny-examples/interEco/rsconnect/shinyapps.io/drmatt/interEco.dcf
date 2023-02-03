@@ -1,0 +1,13 @@
+name: interEco
+title: interEco
+username:
+account: drmatt
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6953066
+bundleId: 6284105
+url: https://drmatt.shinyapps.io/interEco/
+when: 1662702790.66927
+lastSyncTime: 1662702790.66927
+asMultiple: FALSE
+asStatic: FALSE

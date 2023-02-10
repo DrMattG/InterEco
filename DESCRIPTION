@@ -6,7 +6,7 @@ Authors@R:
     role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-8426-6495")),
            person("Rebecca", "Spake", , "r.spake@reading.ac.uk", role = c("aut"),
-           comment = c(ORCID = "0000-0003-4671-2225"))
+           comment = c(ORCID = "0000-0003-4671-2225")))
 Description: Helps user to develop (through walkthrough tutorials) a web-based shiny application which showcases their ecological study and allows others to explore model outcomes interactively 
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8

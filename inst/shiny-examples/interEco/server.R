@@ -35,7 +35,7 @@ output$RDtext<-renderPrint({
   })
 
   output$DHARMa<-renderPrint({
-    cat("Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html], see also
+    cat("Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html], see also
      Zuur & Ieno (2016) https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577")
     })
 
@@ -53,7 +53,7 @@ output$RDtext<-renderPrint({
      dat$predicted <- resDHARMa$fittedPredictedResponse
      dat$observed <- resDHARMa$observedResponse
     #residuals vs spatial variables
-    st <- dat%>%dplyr::select(richness,resid, predicted, observed,  x,y,site_id)%>%
+    st <- dat%>%dplyr::select(richness,resid, predicted, observed,x,y,site_id)%>%
        pivot_longer(cols=-c("richness","site_id", "resid"), names_to = "VAR")%>%
        ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("spatial and temporal variables")+geom_smooth(aes(x=value, y=resid)) #residuals vs predictors in model
     im <- dat%>%dplyr::select(resid, site_id, lt_clim, woody, perc_clay, bare, lui, exotic_grnd)%>%

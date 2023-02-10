@@ -1,5 +1,5 @@
 Package: InterEco
-Title: Functions to facilitate the development of an interactive assessment of interactions in ecological models.
+Title: Functions to facilitate the development of an interactive assessment of interactions in ecological models
 Version: 0.0.0.9000
 Authors@R: 
     c(person("Matt", "Grainger", , "Matthew.grainger@NINA.no", 

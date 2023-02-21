@@ -7,7 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
-options(repos = c("CRAN" = "https://cran.rstudio.com/", "InterEco"="https://github.com/DrMattG/InterEco"))
+options(repos = c("CRAN" = "https://cran.rstudio.com/", "https://github.com/DrMattG/InterEco"))
 
 library(shiny)
 library(shinydashboard)
@@ -107,7 +107,7 @@ body <- dashboardBody(
                              textOutput("RDtext"),
                              plotOutput("RDPlot"),
                              textOutput("DHARMa")
-                             #Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html]
+                             #Residuals were estimated using the DHARMa package [https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html]
                              #Add citations to used packages Zuur & Ieno (2016) https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12577),
                     ),
                     tabPanel("Variance inflation factors",

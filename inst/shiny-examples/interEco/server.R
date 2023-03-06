@@ -55,10 +55,10 @@ output$RDtext<-renderPrint({
     #residuals vs spatial variables
     st <- dat%>%dplyr::select(richness,resid, predicted, observed,x,y,site_id)%>%
        pivot_longer(cols=-c("richness","site_id", "resid"), names_to = "VAR")%>%
-       ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("spatial and temporal variables")+geom_smooth(aes(x=value, y=resid)) #residuals vs predictors in model
+       ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("spatial and temporal variables")+geom_smooth(aes(x=value, y=resid))#residuals vs predictors in model
     im <- dat%>%dplyr::select(resid, site_id, lt_clim, woody, perc_clay, bare, lui, exotic_grnd)%>%
      pivot_longer(cols=-c("site_id", "resid"), names_to = "VAR")%>%
-     ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("variables in model")+geom_smooth(aes(x=value, y=resid)) #residuals vs predictors not in model
+     ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_discrete(guide=F)+ggtitle("variables in model")+geom_smooth(aes(x=value, y=resid))#residuals vs predictors not in model
      nm <- dat%>%dplyr::select(resid, site_id, elev, grnd_cvr, litter, logs, c_n )%>%
      pivot_longer(cols=-c("site_id", "resid"), names_to = "VAR")%>%
      ggplot()+geom_jitter(aes(x=value, y=resid), alpha=0.2,width=0.1)+facet_wrap(~VAR, scales = "free_x")+theme_bw()+ylab("Scaled residuals")+xlab("Variable")+scale_color_continuous(guide=F)+ggtitle("omitted variables")

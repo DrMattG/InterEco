@@ -6,7 +6,7 @@
 #
 #    http://shiny.rstudio.com/
 #
-options(repos = c("CRAN" = "https://cran.rstudio.com/", "InterEco"="https://github.com/DrMattG/InterEco"))
+options(repos = c("CRAN" = "http://cran.rstudio.com/", "InterEco"="http://github.com/DrMattG/InterEco"))
 # TODO find out why App will not deploy to ShinyApps.io - something to do with the build of InterEco
 
 

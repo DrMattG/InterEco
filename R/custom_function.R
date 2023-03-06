@@ -3,7 +3,7 @@
 #' @param data data to be plotted
 #' @param mapping mapping of aes
 #' @param method method to be used defaults to loess
-#' @param ...
+#' @param ... additional params
 #'
 #' @return smoothed loess line
 #' @export

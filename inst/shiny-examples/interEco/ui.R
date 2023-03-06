@@ -6,13 +6,14 @@
 #
 #    http://shiny.rstudio.com/
 #
+options(repos = c("CRAN" = "http://cran.rstudio.com/", "InterEco"="http://github.com/DrMattG/InterEco"))
 
-options(repos = c("CRAN" = "https://cran.rstudio.com/", "https://github.com/DrMattG/InterEco"))
 
 library(shiny)
 library(shinydashboard)
 library(shinyBS)
 library(shinyWidgets)
+#devtools::install_github("https://github.com/DrMattG/InterEco")
 library(InterEco)
 easyprint_js_file <- "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js"
 

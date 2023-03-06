@@ -13,7 +13,7 @@ custom_function(data, mapping, method = "loess", ...)
 
 \item{method}{method to be used defaults to loess}
 
-\item{...}{}
+\item{...}{additional params}
 }
 \value{
 smoothed loess line
